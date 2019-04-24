@@ -108,13 +108,13 @@
 <!--             <type>war</type> -->
 <!--             <scope>compile</scope> -->
 <!--         </dependency> -->
-        <dependency>
-            <groupId>com.ofsoft.cms</groupId>
-            <artifactId>ofcms-front</artifactId>
-            <type>war</type>
-            <scope>compile</scope>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>com.ofsoft.cms</groupId> -->
+<!--             <artifactId>ofcms-front</artifactId> -->
+<!--             <type>war</type> -->
+<!--             <scope>compile</scope> -->
+<!--             <version>1.0-SNAPSHOT</version> -->
+<!--         </dependency> -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>

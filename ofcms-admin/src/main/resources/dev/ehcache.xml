@@ -3,8 +3,8 @@
 	xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false"
 	monitoring="autodetect" dynamicConfig="true">
 	<!-- 磁盘缓存 -->
-	<diskStore path="java.io.tmpdir" />
-	<!-- <diskStore path="c:/temp/ehcache"/> -->
+<!-- 	<diskStore path="java.io.tmpdir" /> -->
+	<diskStore path="d:/temp/ehcache"/>
 	<!-- 默认缓存配置 
          name:缓存名称。 
          maxElementsInMemory：缓存最大个数。 

@@ -92,10 +92,11 @@ public abstract class BaseController extends ApiController {
         params.put("user_name", userName);
         params.put("function_name", functionName);
         params.put("user_id", userId);
+        params.put("business_cod", "111111");
         logService(params);
     }
 
-    public static void logService(Map<?, ?> params) {
+    private static void logService(Map<?, ?> params) {
         SqlPara sql = Db.getSqlPara("system.log.save", params);
         Db.update(sql);
     }

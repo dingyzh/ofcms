@@ -130,6 +130,7 @@ public class SystemUtile {
      * @return  String                                                                                                                                                                                                                                                                                                                                                                                                                                        </pre>
      */
     public static String getParam(String paramName) {
+        
         List<Record> list = getCache(AdminConst.SYSTEM, AdminConst.SYSTEM_PARAM);
         if (list == null || list.size() <= 0) {
             SystemUtile.initParam();

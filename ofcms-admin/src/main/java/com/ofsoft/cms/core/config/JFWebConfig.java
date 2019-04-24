@@ -27,7 +27,9 @@ import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.render.FreeMarkerRender;
 import com.jfinal.render.ViewType;
 import com.jfinal.template.Engine;
+import com.jfinal.template.source.ClassPathSourceFactory;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
+import com.ofsoft.cms.admin.controller.BaseController;
 import com.ofsoft.cms.admin.controller.system.SystemUtile;
 import com.ofsoft.cms.admin.controller.weixin.MessageController;
 import com.ofsoft.cms.admin.controller.weixin.WeiXinConfig;
@@ -85,21 +87,22 @@ public final class JFWebConfig extends JFinalConfig {
         WeiXinConfig.setDevMode(getPropertyToBoolean("jfinal.devmode"));
         // 上传绝对路径时必需设置
         // me.setBaseUploadPath(getProperty("base_upload_path"));
-        // 开发模式(开启会报错，其中的读取request参数采用流的方式，而流已经读取过)
+        // 开发模式
         me.setDevMode(false);
     }
 
     /**
      * 配置访问路由 finalView = baseViewPath + viewPath + view
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void configRoute(Routes me) {
-        this.route = new AutoBindRoutes("/admin", "com.ofsoft.cms.admin.controller");
-        me.add(new AutoBindRoutes("com.ofsoft.cms.front.controller"));
-        me.add(new AutoBindRoutes("/api/v1", "com.ofsoft.cms.api.v1"));
-        me.add(new AutoBindRoutes("/api/v2", "com.ofsoft.cms.api.v2"));
+        
+        this.route = new AutoBindRoutes("/admin", "com.ofsoft.cms.admin.controller").addExcludeClasses(BaseController.class);
+        me.add(new AutoBindRoutes("com.ofsoft.cms.front.controller").addExcludeClasses(com.ofsoft.cms.front.controller.BaseController.class));
         me.add("/weixin", MessageController.class);
         me.add(route);
+        
     }
 
     /**
@@ -119,7 +122,10 @@ public final class JFWebConfig extends JFinalConfig {
             activeRecordPlugin.setDevMode(true);
             activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory(true));
             // sql文件路径
-            activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/conf/sql");
+//            PathKit.getRootClassPath() + 
+            activeRecordPlugin.setBaseSqlTemplatePath("/conf/sql");
+            activeRecordPlugin.getEngine().setSourceFactory(new ClassPathSourceFactory());
+           
             // 添加sql模板
             activeRecordPlugin.addSqlTemplate("init.sql");
             // 添加table与model映射
@@ -178,6 +184,14 @@ public final class JFWebConfig extends JFinalConfig {
         // MobileConst.MOBILE_CONFIG = AdminConst.ADMIN_CONFIG;
         // 初始化系统数据
         if (SystemUtile.isInstall()) {
+            
+            //>>>>>> mine begin
+//            List<Record> cache = CacheKit.get(AdminConst.SYSTEM, AdminConst.SYSTEM_PARAM);
+//            if(cache != null){
+//                CacheKit.removeAll(AdminConst.SYSTEM);
+//            }
+            //<<<<<< mine end
+            
             SystemUtile.init();
         }
         // 启动通知服务
@@ -192,6 +206,16 @@ public final class JFWebConfig extends JFinalConfig {
             }
             e1.printStackTrace();
         }
+        
+        initFreeMarkerConfig();
+        
+        // cf.setTemplateLoader(new MultiTemplateLoader(new
+        // TemplateLoader[]{}));
+        logger.info("服务已经启动完成!");
+        super.afterJFinalStart();
+    }
+
+    private void initFreeMarkerConfig() {
         Configuration cf = FreeMarkerRender.getConfiguration();
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("webroot", JFinal.me().getContextPath());
@@ -226,10 +250,6 @@ public final class JFWebConfig extends JFinalConfig {
         // 增加权限标签
         cf.setSharedVariable("shiro", new ShiroTags());
         cf.setServletContextForTemplateLoading(JFinal.me().getServletContext(), getProperty("template.loader_path"));
-        // cf.setTemplateLoader(new MultiTemplateLoader(new
-        // TemplateLoader[]{}));
-        logger.info("服务已经启动完成!");
-        super.afterJFinalStart();
     }
 
     // 系统关闭之前回调

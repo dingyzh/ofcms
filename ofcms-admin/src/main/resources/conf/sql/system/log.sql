@@ -8,10 +8,12 @@
 #sql("detail")
 	select * from of_sys_oper_log where logid = #para(logid)
 #end
+
 #sql("save")
-	INSERT INTO of_sys_oper_log (user_id, user_name, function_name, business_code, oper_date, oper_time, oper_desc, status)
-	VALUES (#para(user_id), #para(user_name),#para(function_name),#para(business_code), now(), now(), #para(function_name), '1')
+	INSERT INTO of_sys_oper_log (user_id, user_name, function_name, oper_date, oper_time, oper_desc, status)
+	VALUES (#para(user_id), #para(user_name),#para(function_name),now(), now(), #para(function_name), '1')
 #end
+
 #sql("delete")
 	delete from of_sys_oper_log where logid = #para(logid)
 #end

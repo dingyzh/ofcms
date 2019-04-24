@@ -14,6 +14,7 @@ public class SpringDataSourcePlugin implements IDataSourceProvider {
 
 	@Override
 	public DataSource getDataSource() {
+	    
 		return (DataSource) SpringContextUtil.getApplicationContext().getBean(
 				"dataSourceProxy");
 	}

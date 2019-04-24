@@ -1,6 +1,7 @@
 package com.ofsoft.cms.front.controller;
 
 import com.jfinal.core.ActionKey;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.ofsoft.cms.core.annotation.Action;
 import com.ofsoft.cms.core.config.AdminConst;
