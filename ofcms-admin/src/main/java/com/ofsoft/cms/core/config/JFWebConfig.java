@@ -1,12 +1,27 @@
 package com.ofsoft.cms.core.config;
 
-import com.jfinal.config.*;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.java_websocket.server.WebSocketServer;
+
+import com.jfinal.config.Constants;
+import com.jfinal.config.Handlers;
+import com.jfinal.config.Interceptors;
+import com.jfinal.config.JFinalConfig;
+import com.jfinal.config.Plugins;
+import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
 import com.jfinal.ext.interceptor.SessionInViewInterceptor;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
+import com.jfinal.plugin.activerecord.tx.TxByMethodRegex;
+import com.jfinal.plugin.activerecord.tx.TxByMethods;
 import com.jfinal.plugin.druid.DruidStatViewHandler;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.render.FreeMarkerRender;
@@ -29,16 +44,10 @@ import com.ofsoft.cms.core.spring.SpringPlugin;
 import com.ofsoft.cms.core.utils.Tools;
 import com.ofsoft.cms.front.template.freemarker.FreemarkerUtile;
 import com.ofsoft.cms.model._MappingKit;
+
 import freemarker.template.Configuration;
 import freemarker.template.TemplateModelException;
 import freemarker.template.utility.StandardCompress;
-import org.apache.log4j.Logger;
-import org.java_websocket.server.WebSocketServer;
-
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 配置文件
@@ -47,6 +56,7 @@ import java.util.Map;
  * @date 2017年11月24日
  */
 public final class JFWebConfig extends JFinalConfig {
+    
     private Routes route = null;
     private Logger logger = Logger.getLogger(JFWebConfig.class);
     private WebSocketServer webSocket;
@@ -56,10 +66,10 @@ public final class JFWebConfig extends JFinalConfig {
      */
     @Override
     public void configConstant(Constants me) {
-        
-        //加载admin.properties配置文件
+
+        // 加载admin.properties配置文件
         loadPropertyFile(AdminConst.ADMIN_CONFIG);
-        
+
         PropKit.use(AdminConst.ADMIN_CONFIG);
         me.setEncoding("UTF-8");
         me.setI18nDefaultBaseName("i18n");
@@ -75,13 +85,12 @@ public final class JFWebConfig extends JFinalConfig {
         WeiXinConfig.setDevMode(getPropertyToBoolean("jfinal.devmode"));
         // 上传绝对路径时必需设置
         // me.setBaseUploadPath(getProperty("base_upload_path"));
-        // 开发模式
+        // 开发模式(开启会报错，其中的读取request参数采用流的方式，而流已经读取过)
         me.setDevMode(false);
     }
 
     /**
-     * 配置访问路由
-     *  finalView = baseViewPath + viewPath + view
+     * 配置访问路由 finalView = baseViewPath + viewPath + view
      */
     @Override
     public void configRoute(Routes me) {
@@ -103,20 +112,20 @@ public final class JFWebConfig extends JFinalConfig {
             String[] configurations = new String[] { AdminConst.STRING_CONFIG, AdminConst.STRING_CONFIG + "-*" };
             SpringPlugin springPlugin = new SpringPlugin(configurations);
             me.add(springPlugin);
-            
+
             // 添加自动绑定model与表插件
             ActiveRecordPlugin activeRecordPlugin = new ActiveRecordPlugin(new SpringDataSourcePlugin());
             activeRecordPlugin.setShowSql(true);
             activeRecordPlugin.setDevMode(true);
             activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory(true));
-            //sql文件路径
+            // sql文件路径
             activeRecordPlugin.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/conf/sql");
-            //添加sql模板
+            // 添加sql模板
             activeRecordPlugin.addSqlTemplate("init.sql");
-            //添加table与model映射
+            // 添加table与model映射
             _MappingKit.mapping(activeRecordPlugin);
             me.add(activeRecordPlugin);
-            
+
             if (getPropertyToBoolean("jfinal.devmode")) {
                 AutoReloadSqlConfig auto = new AutoReloadSqlConfig();
                 auto.setSqlKit(activeRecordPlugin.getSqlKit());
@@ -147,8 +156,8 @@ public final class JFWebConfig extends JFinalConfig {
         // 启动Shiro拦截器
         me.add(new ShiroInterceptor());
         me.add(new SessionInViewInterceptor());
-        // me.add(new TxByMethodRegex("(.*save.*|.*update.*)"));
-        // me.add(new TxByMethods("save", "update"));
+        me.add(new TxByMethodRegex("(.*save.*|.*update.*)"));
+        me.add(new TxByMethods("save", "update"));
     }
 
     /**
@@ -158,6 +167,7 @@ public final class JFWebConfig extends JFinalConfig {
     public void configHandler(Handlers me) {
         // 该处理器将request.getContextPath()存储在root中，可以解决路径问题
         me.add(new ActionHandler());
+        /** druid 数据库连接池监视管理界面 */
         me.add(new DruidStatViewHandler("/admin/druid"));
         me.add(new WebSocketHandler());
     }

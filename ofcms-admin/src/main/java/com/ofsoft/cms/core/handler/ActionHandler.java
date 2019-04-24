@@ -40,6 +40,7 @@ public class ActionHandler extends Handler {
 		if(target.contains(exclusions)){
 			return;
 		}
+		
 		target = isDisableAccess(target);
 		BaseController.setRequestParams();
 //		RequestSupport.setLocalRequest(request);

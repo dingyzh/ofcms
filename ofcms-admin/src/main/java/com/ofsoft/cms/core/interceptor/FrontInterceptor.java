@@ -1,5 +1,12 @@
 package com.ofsoft.cms.core.interceptor;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
@@ -11,14 +18,13 @@ import com.ofsoft.cms.core.config.ErrorCode;
 import com.ofsoft.cms.core.config.FrontConst;
 import com.ofsoft.cms.core.uitle.SiteUtile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 /**
  * 前端页面拦截器
  * Created by OF on 2018/5/9.
  */
 public class FrontInterceptor implements Interceptor {
+    
+    private Logger logger = Logger.getLogger(this.getClass());
     @Override
     public void intercept(Invocation ai) {
         if (!SystemUtile.isInstall()) {
@@ -46,6 +52,7 @@ public class FrontInterceptor implements Interceptor {
                 SystemUtile.initSite();
                 site = SystemUtile.getDefualSitCache();
             }
+            logger.debug(JSONObject.toJSONString(site));
             controller.setAttr(FrontConst.SITE_SESSION, site);
             controller.setAttr("reroot", JFinal.me().getContextPath() + "/resource/" + site.get("template_path"));
             SiteUtile.setSite(request, site);

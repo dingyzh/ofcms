@@ -1,5 +1,6 @@
 package com.ofsoft.cms.core.uitle;
 
+import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.ofsoft.cms.core.config.FrontConst;
@@ -12,6 +13,8 @@ import java.util.Map;
  * Created by OF on 2018/5/10.
  */
 public class SiteUtile {
+    
+    private static Log log = Log.getLog(SiteUtile.class);
     /**
      * 当前站点线程变量
      */
@@ -58,6 +61,7 @@ public class SiteUtile {
     }
 
     public static String getTemplatePath() {
+        log.debug(getSite().toJson());
         return getSite().getStr("template_path");
     }
 

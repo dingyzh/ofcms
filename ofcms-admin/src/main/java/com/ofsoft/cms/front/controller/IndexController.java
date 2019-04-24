@@ -68,12 +68,15 @@ public class IndexController extends BaseController {
         //是否是内容
         if ("c".equals(isContent)) {
             params.put("content_id", getParaToInt(2, 0));
+            
             String templatePath = SiteUtile.getTemplatePath(record.getStr("column_content_page"), "/article.html");
+            
             render(FrontConst.TEMPLATE_PATE + SiteUtile.getTemplatePath() + templatePath);
             return;
         }
         //是否是单页
         if ("1".equals(record.getStr("is_open"))) {
+            
             String templatePath = SiteUtile.getTemplatePath(record.getStr("template_path"), "/sing.html");
             render(FrontConst.TEMPLATE_PATE + SiteUtile.getTemplatePath() + templatePath);
             return;

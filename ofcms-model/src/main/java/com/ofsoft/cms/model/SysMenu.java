@@ -8,5 +8,5 @@ import com.ofsoft.cms.model.base.BaseSysMenu;
  */
 @SuppressWarnings("serial")
 public class SysMenu extends BaseSysMenu<SysMenu> {
-//	public static final SysMenu dao = new SysMenu().dao();
+	public static final SysMenu dao = new SysMenu().dao();
 }

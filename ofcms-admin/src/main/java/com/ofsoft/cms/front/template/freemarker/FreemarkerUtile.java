@@ -1,17 +1,29 @@
 package com.ofsoft.cms.front.template.freemarker;
 
-import com.ofsoft.cms.front.template.directive.*;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ofsoft.cms.front.template.directive.AdDirective;
+import com.ofsoft.cms.front.template.directive.AnnounceDirective;
+import com.ofsoft.cms.front.template.directive.AnnounceListDirective;
+import com.ofsoft.cms.front.template.directive.BbsListDirective;
+import com.ofsoft.cms.front.template.directive.ColumnDirective;
+import com.ofsoft.cms.front.template.directive.CommentListDirective;
+import com.ofsoft.cms.front.template.directive.ContentDirective;
+import com.ofsoft.cms.front.template.directive.ContentListDirective;
+import com.ofsoft.cms.front.template.directive.PageDirective;
+import com.ofsoft.cms.front.template.directive.SystemDirective;
+import com.ofsoft.cms.front.template.directive.TopicDirective;
+import com.ofsoft.cms.front.template.directive.likeDirective;
 
 /**
  * Created by OF on 2018/5/13.
  */
 public class FreemarkerUtile {
-
-    public static Map initTemplate(){
-        Map data = new HashMap();
+    
+    public static Map<String, TagBase> initTemplate(){
+        Map<String, TagBase> data = new HashMap();
+        
         data.put("like",new likeDirective());
         data.put("column",new ColumnDirective());
         data.put("content",new ContentDirective());
