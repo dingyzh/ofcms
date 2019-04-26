@@ -1,14 +1,16 @@
 package com.ofsoft.cms.front.template.directive;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.SqlPara;
 import com.ofsoft.cms.front.template.freemarker.TagBase;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 内容列表标签
@@ -39,13 +41,28 @@ public class ContentListDirective extends TagBase {
                 params.put("column_id", sb.delete(sb.lastIndexOf(","), sb.length()).toString());
             }
         }
+        
+        if(StringUtils.isNotBlank(getParam("order_field"))){
+            params.put("field", true);
+        }
         SqlPara sql = Db.getSqlPara(SQL_ID, params);
+        setPageOrderByParams(sql, getParam("order_field"), getParam("order_sort", "asc"));
+        
         Page<Record> page = Db.paginate(getPageNum(), getParamToInt("limit", limit), sql);
         List<Record> list = page.getList();
         if(list.size() >0) {
             for (Record record : list) {
                 params.put("content_id", record.get("content_id"));
-                record.set("url",record.get("column_english")+"-c-"+record.get("content_id")+".html");
+                String columnEnglish = record.get("column_english");
+                
+                if(columnEnglish.equals("TV")){
+                    record.set("url",record.get("column_english")+"-t-"+record.get("content_id")+".html");
+                }else if(columnEnglish.equals("movie")){
+                    record.set("url",record.get("column_english")+"-m-"+record.get("content_id")+".html");
+                }else{
+                    record.set("url",record.get("column_english")+"-c-"+record.get("content_id")+".html");
+                }
+                
                 List<Record> sub = Db.find(Db.getSqlPara(CONTENT, params));
                 for (int i = 0; i < sub.size(); i++) {
                     record.set(sub.get(i).getStr("name"), sub.get(i).getStr("value"));
@@ -55,5 +72,15 @@ public class ContentListDirective extends TagBase {
             setVariable("page", page);
         }
         renderBody();
+    }
+    
+    /**
+     * 动态增加order by参数
+     */
+    public void setPageOrderByParams(SqlPara sql, String field, String sort) {
+        if (!StringUtils.isEmpty(field) && !StringUtils.isEmpty(sort)) {
+            sql.setSql(sql.getSql().replace("order_sort", sort));
+            sql.setSql(sql.getSql().replace("order_field", field));
+        }
     }
 }

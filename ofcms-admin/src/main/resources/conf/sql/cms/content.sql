@@ -73,7 +73,7 @@ where
 		  of_cms_content t left join of_cms_column c on t.column_id = c.column_id where t.status = '1' and t.site_id = #para(site_id)
 	#if (column_id?? ) and  t.column_id in (#(column_id)) #end
 	#if (title_name?? ) and  t.title_name like concat ('%',#para(title_name),'%')#end
-	#if (sort?? && field) order by order_field order_sort  #else order by t.content_id desc #end
+	#if (field) order by order_field order_sort  #else order by t.content_id desc #end
 #end
 
 #sql("column_name")

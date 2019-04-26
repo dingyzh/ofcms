@@ -16,12 +16,11 @@ import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
 import com.jfinal.ext.interceptor.SessionInViewInterceptor;
-import com.jfinal.kit.PathKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
+import com.jfinal.plugin.activerecord.sql.ParaDirective;
 import com.jfinal.plugin.activerecord.tx.TxByMethodRegex;
-import com.jfinal.plugin.activerecord.tx.TxByMethods;
 import com.jfinal.plugin.druid.DruidStatViewHandler;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.render.FreeMarkerRender;
@@ -88,7 +87,7 @@ public final class JFWebConfig extends JFinalConfig {
         // 上传绝对路径时必需设置
         // me.setBaseUploadPath(getProperty("base_upload_path"));
         // 开发模式
-        me.setDevMode(false);
+        me.setDevMode(true);
     }
 
     /**
@@ -120,11 +119,13 @@ public final class JFWebConfig extends JFinalConfig {
             ActiveRecordPlugin activeRecordPlugin = new ActiveRecordPlugin(new SpringDataSourcePlugin());
             activeRecordPlugin.setShowSql(true);
             activeRecordPlugin.setDevMode(true);
-            activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory(true));
+            activeRecordPlugin.setContainerFactory(new CaseInsensitiveContainerFactory(true));            
             // sql文件路径
-//            PathKit.getRootClassPath() + 
             activeRecordPlugin.setBaseSqlTemplatePath("/conf/sql");
+            //设置sql文件路径解析方式（以 classpath方式解析）
             activeRecordPlugin.getEngine().setSourceFactory(new ClassPathSourceFactory());
+            //允许参数#{para}的变量不存在
+            ParaDirective.setCheckParaAssigned(false);
            
             // 添加sql模板
             activeRecordPlugin.addSqlTemplate("init.sql");
@@ -162,8 +163,9 @@ public final class JFWebConfig extends JFinalConfig {
         // 启动Shiro拦截器
         me.add(new ShiroInterceptor());
         me.add(new SessionInViewInterceptor());
+        
         me.add(new TxByMethodRegex("(.*save.*|.*update.*)"));
-        me.add(new TxByMethods("save", "update"));
+//        me.add(new TxByMethods("save", "update"));
     }
 
     /**
@@ -184,14 +186,6 @@ public final class JFWebConfig extends JFinalConfig {
         // MobileConst.MOBILE_CONFIG = AdminConst.ADMIN_CONFIG;
         // 初始化系统数据
         if (SystemUtile.isInstall()) {
-            
-            //>>>>>> mine begin
-//            List<Record> cache = CacheKit.get(AdminConst.SYSTEM, AdminConst.SYSTEM_PARAM);
-//            if(cache != null){
-//                CacheKit.removeAll(AdminConst.SYSTEM);
-//            }
-            //<<<<<< mine end
-            
             SystemUtile.init();
         }
         // 启动通知服务
@@ -212,7 +206,7 @@ public final class JFWebConfig extends JFinalConfig {
         // cf.setTemplateLoader(new MultiTemplateLoader(new
         // TemplateLoader[]{}));
         logger.info("服务已经启动完成!");
-        super.afterJFinalStart();
+//        super.afterJFinalStart();
     }
 
     private void initFreeMarkerConfig() {
@@ -255,7 +249,7 @@ public final class JFWebConfig extends JFinalConfig {
     // 系统关闭之前回调
     @Override
     public void beforeJFinalStop() {
-        super.beforeJFinalStop();
+//        super.beforeJFinalStop();
         try {
             webSocket.stop();
         } catch (IOException e) {

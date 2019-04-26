@@ -38,7 +38,7 @@ public class ContentDirective extends TagBase {
         for (int i = 0; i < list.size(); i++) {
             params.put(list.get(i).getStr("name"), list.get(i).getStr("value"));
         }
-        log.debug("params:"+params.toString());
+        log.debug("========content params:"+params.toString());
         setVariable("content", params);
         renderBody();
     }

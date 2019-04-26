@@ -42,13 +42,13 @@ public class IndexController extends BaseController {
     public void index() {
         Map<String, Object> params = getParamsMap();
         String page = getPara(0);
-        //是否是首页
+        // 是否是首页
         if ("/".equals(page) || page == null || "index".equals(page)) {
             setAttr("site", SiteUtile.getSite());
             render(FrontConst.TEMPLATE_PATE + SiteUtile.getTemplatePath() + "/index.html");
             return;
         }
-        //获取当前栏目
+        // 获取当前栏目
         params.put("site_id", SiteUtile.getSiteId());
         params.put("column_english", page);
         params.put("page", page);
@@ -66,30 +66,45 @@ public class IndexController extends BaseController {
         }
         setAttr("columns", record);
         setAttr("params", params);
-        //是否是内容
+        // 是否是内容
         if ("c".equals(isContent)) {
             params.put("content_id", getParaToInt(2, 0));
-            
+
             String templatePath = SiteUtile.getTemplatePath(record.getStr("column_content_page"), "/article.html");
-            
+
             render(FrontConst.TEMPLATE_PATE + SiteUtile.getTemplatePath() + templatePath);
             return;
         }
-        //是否是单页
+
+        if ("t".equals(isContent)) {
+            params.put("content_id", getParaToInt(2, 0));
+            String templatePath = SiteUtile.getTemplatePath(record.getStr("column_content_page"), "/column/tvDetail.html");
+
+            render(FrontConst.TEMPLATE_PATE + SiteUtile.getTemplatePath() + templatePath);
+            return;
+        }
+        if ("m".equals(isContent)) {
+            params.put("content_id", getParaToInt(2, 0));
+            String templatePath = SiteUtile.getTemplatePath(record.getStr("column_content_page"), "/column/movieDetail.html");
+
+            render(FrontConst.TEMPLATE_PATE + SiteUtile.getTemplatePath() + templatePath);
+            return;
+        }
+
+        // 是否是单页
         if ("1".equals(record.getStr("is_open"))) {
-            
+
             String templatePath = SiteUtile.getTemplatePath(record.getStr("template_path"), "/sing.html");
             render(FrontConst.TEMPLATE_PATE + SiteUtile.getTemplatePath() + templatePath);
             return;
         }
-        //当前页码 栏目页
+        // 当前页码 栏目页
         int pageNum = getParaToInt(1, 1);
         setAttr("pageNum", pageNum);
         String templatePath = SiteUtile.getTemplatePath(record.getStr("template_path"), "/list.html");
         render(FrontConst.TEMPLATE_PATE + SiteUtile.getTemplatePath() + templatePath);
         return;
     }
-
 
     /**
      * 列表页面
@@ -116,9 +131,9 @@ public class IndexController extends BaseController {
     public void column() {
         Map params = getParamsMap();
         String page = getPara(0);
-        //当前页码
+        // 当前页码
         int pageNum = getParaToInt(1, 1);
-        //获取当前栏目
+        // 获取当前栏目
         params.put("site_id", SiteUtile.getSiteId());
         params.put("column_english", page);
         params.put("page", page);

@@ -21,6 +21,7 @@ public class ColumnDirective extends TagBase {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("site_id", getParam("site_id"));
         params.put("up_column_id", getParam("parent_id","0"));
+        params.put("orderBy", getParam("orderBy"));
         List <Record> list = Db.find(Db.getSqlPara(sqlid,params));
 //        List<TreeGird> result = SystemUtile.ColumnTree(list,parent);
         setVariable("column", list);

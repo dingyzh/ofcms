@@ -41,6 +41,7 @@ public class ComnController extends BaseController {
 		Map<String, Object> params = getParamsMap();
 		try {
 			SqlPara sql = Db.getSqlPara(params.get("sqlid").toString(), params);
+			
 			Db.update(sql);
 			rendSuccessJson();
 		} catch (Exception e) {

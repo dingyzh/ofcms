@@ -83,7 +83,7 @@ p.title {
 			<div>
 				<p class="title">电视剧</p>
 				<div>
-					<@of.content_list site_id = site.site_id column_name="TV" limit=5>
+					<@of.content_list site_id = site.site_id column_name="TV" limit=5 order_field="sort" order_sort="asc">
 					<#list content_list as data>
 					<div style="float: left;">
 					<a href="${data.url}" title="${data.title_name}" style="display: block;">
